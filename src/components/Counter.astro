@@ -16,17 +16,3 @@ const { initialCount = 0 } = Astro.props;
 <div class="counter-message">
 	<slot />
 </div>
-
-<style>
-	.counter {
-		display: grid;
-		font-size: 2em;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		margin-top: 2em;
-		place-items: center;
-	}
-
-	.counter-message {
-		text-align: center;
-	}
-</style>

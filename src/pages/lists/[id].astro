@@ -1,0 +1,32 @@
+---
+import Form from '../../components/Form.astro';
+import Layout from '../../layouts/Layout.astro';
+
+// export async function getStaticPaths() {
+export function getStaticPaths() {
+//     const data = await fetch('...').then(response => response.json());
+
+//   return data.map((post) => {
+//     return {
+//       params: { id: post.id },
+//       props: { post },
+//     };
+//   });
+
+  return [
+    {params: {id: 1}, props: {name: 'one', items: [{name:'test'}]}},
+    {params: {id: 2}, props: {name: 'two', items: []}},
+    {params: {id: 3}, props: {name: 'three', items: []}},
+  ];
+}
+
+const { id } = Astro.params;
+const { name, items } = Astro.props;
+
+---
+
+<Layout title="Welcome to Astro.">
+	<main>
+		<Form name={name} items={items} />
+	</main>
+</Layout>
