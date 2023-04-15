@@ -1,0 +1,49 @@
+---
+---
+
+<div x-data>
+    <template x-if="! $store.auth.loading && $store.auth.user">
+        <div>
+            Hello, <span x-text="$store.auth.user.email"></span>
+            <button type="button" @click="window.doSignOut">
+                Sign Out
+            </button>
+        </div>
+    </template>
+    <template x-if="! $store.auth.loading && ! $store.auth.user">
+        <a href="/login">Login</a>
+    </template>
+</div>
+<script>
+import { auth } from "../scripts/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+
+document.addEventListener('alpine:init', () => {
+    window.Alpine.store('auth', {
+        user: null,
+        loading: true,
+        setUser(user) {
+            this.user = user
+            this.loading = false
+
+            if (this.user && window.location.pathname === '/login') {
+                window.location.href = '/'
+            } else if (! this.user && window.location.pathname !== '/login') {
+                window.location.href = '/login'
+            }
+        }
+    })
+})
+
+onAuthStateChanged(auth, (user) => {
+    window.Alpine.store('auth').setUser(user)
+});
+
+window.doSignOut = function () {
+    signOut(auth).then(() => {
+        // Sign-out successful.
+    }).catch((error) => {
+        // An error happened.
+    });
+}
+</script>

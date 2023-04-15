@@ -3,7 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-console.log(import.meta.env)
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.PUBLIC_FIREBASE_APIKEY,
@@ -15,7 +14,6 @@ const firebaseConfig = {
   appId: import.meta.env.PUBLIC_FIREBASE_APPID,
 };
 
-console.log(firebaseConfig);
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
