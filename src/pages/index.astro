@@ -1,33 +1,55 @@
 ---
-import Card from '../components/Card.astro';
 import Layout from '../layouts/Layout.astro';
 
-const lists = [
-	{
-		id: 1,
-		name: 'one',
-		items: [],
-	},
-	{
-		id: 2,
-		name: 'two',
-		items: [],
-	},
-	{
-		id: 3,
-		name: 'three',
-		items: [],
-	},
-];
 ---
 
 <Layout title="Welcome to Astro.">
-	<div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
-		{lists.map((list) => (
-			<Card id={list.id} name={list.name} count={list.items.length} />
-		))}
+	<div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4" x-data>
+		<template x-for="list in $store.lists.lists">
+			<div class="bg-white rounded-lg flex justify-between">
+				<a x-bind:href="`/lists/${list.id}`" class="grow block p-3 flex items-center">
+					<span x-text="list.title"></span>
+					<span class="text-slate-400 text-xs ml-2" x-text="list.items.length">0</span>
+				</a>
+				<!-- <button type="button" class="btn btn-square btn-sm btn-outline p-3">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+					</svg>
+				</button> -->
+			</div>
+		</template>
 		<a href="/lists/create" class="bg-white block p-3 rounded-lg">
 			+ Add
 		</a>
 	</div>
 </Layout>
+
+<script>
+import { database } from "../scripts/firebase";
+import { collection, onSnapshot, query } from "firebase/firestore";
+
+document.addEventListener('alpine:init', () => {
+    window.Alpine.store('lists', {
+        lists: [],
+        loading: true,
+        setLists(lists) {
+			console.log(lists)
+            this.lists = lists
+            this.loading = false
+        }
+    })
+})
+
+const q = query(collection(database, "lists"));
+
+const unsubscribe = onSnapshot(q, (querySnapshot) => {
+  const lists = [];
+  querySnapshot.forEach((doc) => {
+	const list = doc.data();
+	list.id = doc.id;
+	lists.push(list);
+  });
+
+  window.Alpine.store('lists').setLists(lists);
+});
+</script>
